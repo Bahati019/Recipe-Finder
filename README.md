@@ -11,7 +11,8 @@ This app allows users to input ingredients they already have at home and fetches
 - React Native
 - TypeScript
 - Expo
-- Recipe API name
+- Recipe API
+
 
 ## Key Features
 
