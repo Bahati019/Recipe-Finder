@@ -69,36 +69,47 @@ export default function DetailScreen() {
       ingredients.push(`${measure} ${ingredient}`);
     }
   }
-  <TouchableOpacity
-  style={{ alignSelf: 'flex-end', marginBottom: 10 }}
-  onPress={async () => {
-    if (favorite) {
-      await removeFavorite(meal.idMeal);
-      setFavorite(false);
-    } else {
-      await addFavorite(meal.idMeal);
-      setFavorite(true);
-    }
-  }}
->
-  <AntDesign
-    name={favorite ? 'heart' : 'hearto'}
-    size={28}
-    color={favorite ? 'red' : 'gray'}
-  />
-</TouchableOpacity>
+  
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{meal.strMeal}</Text>
+    <View>
       <Image source={{ uri: meal.strMealThumb }} style={styles.image} />
-      <Text style={styles.subtitle}>Category: {meal.strCategory}</Text>
-      <Text style={styles.subtitle}>Cuisine: {meal.strArea}</Text>
-      <Text style={styles.heading}>Ingredients:</Text>
-      {ingredients.map((item, index) => (
+    </View>
+    <TouchableOpacity 
+      style={styles.favoriteButton}
+      onPress={async () => {
+        if (favorite) {
+          await removeFavorite(meal.idMeal);
+          setFavorite(false);
+        } else {
+          await addFavorite({
+            idMeal: meal.idMeal,
+            strMeal: meal.strMeal,
+            strMealThumb: meal.strMealThumb,
+          });
+          setFavorite(true);
+        }
+      }}
+      >
+        <AntDesign
+          name={favorite ? 'heart' : 'hearto'}
+          size={28}
+          color={favorite ? 'red' : 'white'}
+        />
+      </TouchableOpacity>
+      <View style={styles.content}>
+        <Text style={styles.title}>{meal.strMeal}</Text>
+        <Text style={styles.subtitle}>Category: {meal.strCategory}</Text>
+        <Text style={styles.subtitle}>Cuisine: {meal.strArea}</Text>
+
+        <Text style={styles.heading}>Ingredients:</Text>
+        {ingredients.map((item, index) => (
         <Text key={index} style={styles.text}>• {item}</Text>
       ))}
-      <Text style={styles.heading}>Instructions:</Text>
-      <Text style={styles.text}>{meal.strInstructions}</Text>
+
+        <Text style={styles.heading}>Instructions:</Text>
+        <Text style={styles.text}>{meal.strInstructions}</Text>  
+      </View>
     </ScrollView>
   );
 }
@@ -120,12 +131,25 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   content: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -20,
-  },
+  padding: 20,
+  backgroundColor: '#fff',
+  borderTopLeftRadius: 20,
+  borderTopRightRadius: 20,
+  marginTop: -20,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+  elevation: 4,
+},
+favoriteButton: {
+  position: 'absolute',
+  top: 10,
+  right: 10,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  padding: 6,
+  borderRadius: 20,
+},
   title: {
     fontSize: 26,
     fontWeight: 'bold',

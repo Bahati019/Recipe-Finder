@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SearchScreen from './screens/searchScreen';
 import DetailScreen from './screens/DetailScreen';
-
+import FavoritesScreen from './screens/FavoritesScreen';
 
 export type RootStackParamList = {
   Search: undefined;
@@ -13,6 +13,7 @@ export type RootStackParamList = {
     strMeal: string;
     strMealThumb: string;
   };
+  Favorites: undefined; // <-- add this line
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +30,14 @@ export default function App() {
             title: 'Recipe Details',
             headerBackTitle: 'Back',
           }}
-           />
+        />
+        <Stack.Screen 
+          name="Favorites" 
+          component={FavoritesScreen}
+          options={{
+            title: 'Favorites',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
