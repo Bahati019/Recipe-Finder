@@ -2,28 +2,35 @@
   "expo": {
     "name": "recipe-finder",
     "slug": "recipe-finder",
+    "scheme": "recipe-finder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/recipe-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/recipe-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FDFBF7"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.bahati019.recipefinder",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/recipe-icon.png",
+        "backgroundColor": "#FDFBF7"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "abf40100-36da-43d1-88b4-90d13354ad32"
+      }
     }
   }
 }
