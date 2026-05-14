@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { RootStackParamList } from '../App';
 import { addFavorite, removeFavorite, isFavorite } from '../utils/storage';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message';
 
 type DetailRouteProp = RouteProp<RootStackParamList, 'Detail'>;
 
@@ -90,10 +89,6 @@ export default function DetailScreen() {
             if (favorite) {
               await removeFavorite(meal.idMeal);
               setFavorite(false);
-              Toast.show({
-                type: 'info',
-                text1: 'Removed from Favorites 🗑️',
-              });
             } else {
               await addFavorite({
                 idMeal: meal.idMeal,
@@ -101,11 +96,6 @@ export default function DetailScreen() {
                 strMealThumb: meal.strMealThumb,
               });
               setFavorite(true);
-              Toast.show({
-                type: 'success',
-                text1: 'Added to Favorites ✨',
-                text2: 'You can find it in your favorites tab.',
-              });
             }
           }}
         >

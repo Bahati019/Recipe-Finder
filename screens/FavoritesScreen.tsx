@@ -55,7 +55,7 @@ export default function FavoritesScreen() {
           <Text style={styles.title} numberOfLines={2}>
             {item.strMeal}
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleRemove(item.idMeal)}
           >
@@ -65,34 +65,70 @@ export default function FavoritesScreen() {
       </TouchableOpacity>
     </View>
   );
-
   return (
-    <FlatList
-      key={'2-column-grid'}
-      data={favorites}
-      keyExtractor={(item) => item.idMeal}
-      renderItem={renderItem}
-      numColumns={2}
-      columnWrapperStyle={styles.row}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-      ListHeaderComponent={
-        <View style={styles.headerContainer}>
-          <Text style={styles.heading}>Your Favorites</Text>
-        </View>
-      }
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <MaterialCommunityIcons name="heart-broken-outline" size={64} color="#FFD1CC" style={{ marginBottom: 16 }} />
-          <Text style={styles.empty}>No favorites yet.</Text>
-          <Text style={styles.emptySub}>Start exploring and save some recipes!</Text>
-        </View>
-      }
-    />
+    <View style={styles.screen}>
+
+      {/* FIXED HEADER */}
+      <View style={styles.fixedHeader}>
+        <Text style={styles.heading}>Your Favorites</Text>
+      </View>
+
+      {/* ONLY THIS SCROLLS */}
+      <FlatList
+        key={'2-column-grid'}
+        data={favorites}
+        keyExtractor={(item) => item.idMeal}
+        renderItem={renderItem}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons
+              name="heart-broken-outline"
+              size={64}
+              color="#FFD1CC"
+              style={{ marginBottom: 16 }}
+            />
+
+            <Text style={styles.empty}>
+              No favorites yet.
+            </Text>
+
+            <Text style={styles.emptySub}>
+              Start exploring and save some recipes!
+            </Text>
+          </View>
+        }
+      />
+    </View>
   );
 }
-
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#FDFBF7',
+  },
+  fixedHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    backgroundColor: '#FDFBF7',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  backButton: {
+    marginRight: 14,
+  },
+  heading: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#2D3142',
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+  },
   container: {
     backgroundColor: '#FDFBF7',
     paddingBottom: 40,
@@ -103,11 +139,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
-  heading: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#2D3142',
-  },
+  // heading: {
+  //   fontSize: 28,
+  //   fontWeight: '800',
+  //   color: '#2D3142',
+  // },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',

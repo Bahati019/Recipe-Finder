@@ -25,7 +25,7 @@ type Meal = {
   strMealThumb: string;
 };
 
-const CATEGORIES = ['Seafood', 'Beef', 'Chicken', 'Vegetarian', 'Dessert', 'Pasta'];
+const CATEGORIES = ['All', 'Seafood', 'Beef', 'Chicken', 'Vegetarian', 'Dessert', 'Pasta'];
 const { width } = Dimensions.get('window');
 
 export default function SearchScreen() {
@@ -52,6 +52,7 @@ export default function SearchScreen() {
       }
     };
     fetchMealOfTheDay();
+    fetchAllMeals();
   }, []);
 
   const searchRecipes = async () => {
@@ -86,6 +87,27 @@ export default function SearchScreen() {
     }
   };
 
+  const fetchAllMeals = async () => {
+    setSelectedCategory('All');
+    setQuery('');
+    setLoading(true);
+
+    try {
+      const response = await axios.get<{ meals: Meal[] | null }>(
+        'https://www.themealdb.com/api/json/v1/1/search.php?s='
+      );
+
+      const meals = response.data.meals?.slice(0, 20) || [];
+
+      setRecipes(meals);
+    } catch (error) {
+      console.error('Failed to fetch all meals:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const renderItem = ({ item, index }: { item: Meal; index: number }) => (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
@@ -113,66 +135,131 @@ export default function SearchScreen() {
   );
 
   return (
-    <FlatList
-      data={recipes}
-      keyExtractor={(item) => item.idMeal}
-      renderItem={renderItem}
-      numColumns={2}
-      columnWrapperStyle={styles.row}
-      ListEmptyComponent={() =>
-         !loading && query !== '' ? <Text style={styles.emptyText}>No recipes found.</Text> : null
-      }
-      ListHeaderComponent={
-        <View style={styles.headerContainer}>
-          <View style={styles.headerTop}>
-            <View>
-              <Text style={styles.greeting}>Hello, Chef! 👨‍🍳</Text>
-              <Text style={styles.subheading}>What are you craving today?</Text>
-            </View>
-          </View>
+    <View style={styles.screen}>
 
-          <View style={styles.searchSection}>
-            <Feather name="search" size={20} color="#999" style={styles.searchIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Search for delicious meals..."
-              value={query}
-              onChangeText={setQuery}
-              onSubmitEditing={searchRecipes}
-              placeholderTextColor="#999"
-              returnKeyType="search"
-            />
-            {query.length > 0 && (
-              <TouchableOpacity onPress={searchRecipes} style={styles.searchAction}>
-                <LinearGradient colors={['#FF7F50', '#FF6F61']} style={styles.searchActionGradient}>
-                  <Feather name="arrow-right" size={20} color="#FFF" />
-                </LinearGradient>
-              </TouchableOpacity>
-            )}
-          </View>
+      {/* FIXED TOP SECTION */}
+      <View style={styles.topSection}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.greeting}>
+              Hello, Chef! 👨‍🍳
+            </Text>
 
-          <View style={styles.categoriesContainer}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
-              {CATEGORIES.map((cat) => {
-                const isActive = selectedCategory === cat;
-                return (
-                  <TouchableOpacity
-                    key={cat}
-                    activeOpacity={0.8}
-                    onPress={() => fetchByCategory(cat)}
-                    style={[styles.categoryPill, isActive && styles.categoryPillActive]}
+            <Text style={styles.subheading}>
+              What are you craving today?
+            </Text>
+          </View>
+        </View>
+
+        {/* SEARCH */}
+        <View style={styles.searchSection}>
+          <Feather
+            name="search"
+            size={20}
+            color="#999"
+            style={styles.searchIcon}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Search for delicious meals..."
+            value={query}
+            onChangeText={setQuery}
+            onSubmitEditing={searchRecipes}
+            placeholderTextColor="#999"
+            returnKeyType="search"
+          />
+
+          {query.length > 0 && (
+            <TouchableOpacity
+              onPress={searchRecipes}
+              style={styles.searchAction}
+            >
+              <LinearGradient
+                colors={['#FF7F50', '#FF6F61']}
+                style={styles.searchActionGradient}
+              >
+                <Feather
+                  name="arrow-right"
+                  size={20}
+                  color="#FFF"
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* CATEGORIES */}
+        <View style={styles.categoriesContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesScroll}
+          >
+            {CATEGORIES.map((cat) => {
+              const isActive =
+                selectedCategory === cat;
+
+              return (
+                <TouchableOpacity
+                  key={cat}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    if (cat === 'All') {
+                      fetchAllMeals();
+                    } else {
+                      fetchByCategory(cat);
+                    }
+                  }}
+                  style={[
+                    styles.categoryPill,
+                    isActive &&
+                    styles.categoryPillActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      isActive &&
+                      styles.categoryTextActive,
+                    ]}
                   >
-                    <Text style={[styles.categoryText, isActive && styles.categoryTextActive]}>{cat}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
+                    {cat}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </View>
 
-          {query === '' && selectedCategory === '' && mealOfDay && (
-            <View style={styles.mealOfDayContainer}>
-              <Text style={styles.sectionTitle}>Chef's Pick of the Day</Text>
-              <View>
+      {/* ONLY THIS PART SCROLLS */}
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#FF7F50"
+          style={{ marginTop: 40 }}
+        />
+      ) : (
+        <FlatList
+          data={recipes}
+          keyExtractor={(item) => item.idMeal}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 120,
+          }}
+
+          ListHeaderComponent={
+            mealOfDay ? (
+              <View style={styles.mealOfDayContainer}>
+                <Text style={styles.sectionTitle}>
+                  Chef's Pick of the Day
+                </Text>
+
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={styles.featuredCard}
@@ -180,43 +267,73 @@ export default function SearchScreen() {
                     navigation.navigate('Detail', {
                       idMeal: mealOfDay.idMeal,
                       strMeal: mealOfDay.strMeal,
-                      strMealThumb: mealOfDay.strMealThumb,
+                      strMealThumb:
+                        mealOfDay.strMealThumb,
                     })
                   }
                 >
-                  <Image source={{ uri: mealOfDay.strMealThumb }} style={styles.featuredImage} />
+                  <Image
+                    source={{
+                      uri: mealOfDay.strMealThumb,
+                    }}
+                    style={styles.featuredImage}
+                  />
+
                   <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.9)']}
+                    colors={[
+                      'transparent',
+                      'rgba(0,0,0,0.9)',
+                    ]}
                     style={styles.featuredGradient}
                   >
                     <View style={styles.badge}>
-                      <Text style={styles.badgeText}>Must Try 🔥</Text>
+                      <Text style={styles.badgeText}>
+                        Must Try 🔥
+                      </Text>
                     </View>
-                    <Text style={styles.featuredTitle}>{mealOfDay.strMeal}</Text>
+
+                    <Text style={styles.featuredTitle}>
+                      {mealOfDay.strMeal}
+                    </Text>
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
-            </View>
-          )}
+            ) : null
+          }
 
-          {(query !== '' || selectedCategory !== '') && recipes.length > 0 && (
-            <Text style={styles.sectionTitle}>Search Results</Text>
-          )}
-
-          {loading && <ActivityIndicator size="large" color="#FF7F50" style={{ marginTop: 40 }} />}
-        </View>
-      }
-      contentContainerStyle={styles.container}
-    />
+          ListEmptyComponent={() =>
+            !loading ? (
+              <Text style={styles.emptyText}>
+                No recipes found.
+              </Text>
+            ) : null
+          }
+        />
+      )}
+    </View>
   );
-}
 
+}
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  topSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
     backgroundColor: '#FDFBF7',
-    paddingBottom: 40,
-    minHeight: '100%',
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+    // backgroundColor: '#FDFBF7',
+    // paddingBottom: 40,
+    // minHeight: '100%',
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: '#FDFBF7',
+  },
+  resultsContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   headerContainer: {
     paddingBottom: 10,

@@ -16,7 +16,7 @@
     "@types/react": "~19.2.10",
     "axios": "^1.9.0",
     "expo": "^55.0.16",
-    "expo-dev-client": "~55.0.28",
+    "expo-dev-client": "~55.0.32",
     "expo-linear-gradient": "~55.0.13",
     "expo-status-bar": "~55.0.5",
     "react": "19.2.0",

@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message';
 
 import SearchScreen from './screens/searchScreen';
 import DetailScreen from './screens/DetailScreen';
@@ -12,7 +11,7 @@ import FavoritesScreen from './screens/FavoritesScreen';
 
 export type RootStackParamList = {
   MainTabs: undefined;
-  Search: undefined;
+  Home: undefined;
   Favorites: undefined;
   Detail: {
     idMeal: string;
@@ -45,15 +44,15 @@ function TabNavigator() {
         },
       }}
     >
-      <Tab.Screen 
-        name="Search" 
+      <Tab.Screen
+        name="Home"
         component={SearchScreen}
         options={{
-          tabBarIcon: ({ color, size }) => <Feather name="search" size={size} color={color} />
+          tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} />
         }}
       />
-      <Tab.Screen 
-        name="Favorites" 
+      <Tab.Screen
+        name="Favorites"
         component={FavoritesScreen}
         options={{
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="heart-outline" size={size} color={color} />
@@ -65,25 +64,22 @@ function TabNavigator() {
 
 export default function App() {
   return (
-    <>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="MainTabs">
-          <Stack.Screen 
-            name="MainTabs" 
-            component={TabNavigator} 
-            options={{ headerShown: false }} 
-          />
-          <Stack.Screen
-            name="Detail"
-            component={DetailScreen}
-            options={{
-              title: 'Recipe Details',
-              headerBackTitle: 'Back',
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <Toast />
-    </>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="MainTabs">
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Detail"
+          component={DetailScreen}
+          options={{
+            title: 'Recipe Details',
+            headerBackTitle: 'Back',
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
